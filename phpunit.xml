@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         executionOrder="random"
+         failOnWarning="true"
+         failOnRisky="true"
+         failOnEmptyTestSuite="true"
+         beStrictAboutOutputDuringTests="true"
+
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Architecture">
+            <directory>tests/Architecture</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+        <testsuite name="Performance">
+            <directory>tests/Performance</directory>
+        </testsuite>
+        <testsuite name="Security">
+            <directory>tests/Security</directory>
+        </testsuite>
+        <testsuite name="TestSuite">
+            <directory>tests/TestSuite</directory>
+        </testsuite>
+    </testsuites>
+    
+    <!-- Code Coverage Configuration -->
+    <coverage includeUncoveredFiles="true"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="true">
+        <report>
+            <html outputDirectory="tests/coverage/html" lowUpperBound="50" highLowerBound="80"/>
+            <text outputFile="tests/coverage/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="tests/coverage/xml"/>
+            <clover outputFile="tests/coverage/clover.xml"/>
+        </report>
+    </coverage>
+    
+    <!-- Logging Configuration -->
+    <logging>
+        <junit outputFile="tests/results/junit.xml"/>
+        <teamcity outputFile="tests/results/teamcity.txt"/>
+        <testdoxHtml outputFile="tests/results/testdox.html"/>
+        <testdoxText outputFile="tests/results/testdox.txt"/>
+    </logging>
+    
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    
+    <php>
+        <!-- Application Environment -->
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_KEY" value="base64:MxNkeg3zg2JuE/y/pp0dx3zo6iXIPxlLQYWdhvGrqgY="/>
+        <env name="APP_DEBUG" value="true"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        
+        <!-- Performance Optimizations for Testing -->
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_STORE" value="array"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        
+        <!-- Database Configuration - In-Memory SQLite -->
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="DB_FOREIGN_KEYS" value="true"/>
+        
+        <!-- Mail Configuration -->
+        <env name="MAIL_MAILER" value="array"/>
+        
+        <!-- Disable External Services -->
+        <env name="PULSE_ENABLED" value="false"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="SCOUT_DRIVER" value="null"/>
+        <env name="BROADCAST_DRIVER" value="null"/>
+        
+        <!-- Rate Limiting (Relaxed for Testing) -->
+        <env name="THROTTLE_REQUESTS_PER_MINUTE" value="1000"/>
+        <env name="THROTTLE_LOGIN_ATTEMPTS" value="100"/>
+        
+        <!-- Payment Gateway Test Configuration -->
+        <env name="STRIPE_KEY" value="pk_test_"/>
+        <env name="STRIPE_SECRET" value="sk_test_"/>
+        <env name="PAYPAL_MODE" value="sandbox"/>
+    </php>
+</phpunit>

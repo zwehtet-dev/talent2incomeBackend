@@ -1,0 +1,1048 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Talent2Income API",
+        "description": "A comprehensive micro jobs and skill exchange platform API that connects service providers with clients seeking specific tasks or expertise.",
+        "contact": {
+            "name": "API Support",
+            "email": "api@talent2income.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Development Server"
+        }
+    ],
+    "paths": {
+        "/api/admin/usage/analytics": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get API usage analytics",
+                "description": "Retrieve comprehensive API usage statistics and analytics",
+                "operationId": "5e8104d3be64fbc3e8d6717e3eb26aa6",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date for analytics (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-15"
+                        }
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Analytics period",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "day",
+                                "week",
+                                "month"
+                            ],
+                            "example": "day"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usage analytics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total_requests": {
+                                            "type": "integer",
+                                            "example": 15420
+                                        },
+                                        "unique_users": {
+                                            "type": "integer",
+                                            "example": 342
+                                        },
+                                        "rate_limit_violations": {
+                                            "type": "integer",
+                                            "example": 23
+                                        },
+                                        "endpoint_usage": {
+                                            "properties": {
+                                                "auth": {
+                                                    "type": "integer",
+                                                    "example": 2340
+                                                },
+                                                "jobs": {
+                                                    "type": "integer",
+                                                    "example": 5670
+                                                },
+                                                "skills": {
+                                                    "type": "integer",
+                                                    "example": 3210
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "hourly_breakdown": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "hour": {
+                                                        "type": "string",
+                                                        "example": "14:00"
+                                                    },
+                                                    "requests": {
+                                                        "type": "integer",
+                                                        "example": 1250
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Forbidden"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/usage/rate-limits": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get rate limit violations",
+                "description": "Retrieve rate limit violation statistics and details",
+                "operationId": "dc504b0715ac27008385ecc48722d5ea",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date for violations (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-15"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rate limit data retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total_violations": {
+                                            "type": "integer",
+                                            "example": 23
+                                        },
+                                        "violations_by_endpoint": {
+                                            "properties": {
+                                                "auth": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "jobs": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "skills": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "top_violators": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "ip": {
+                                                        "type": "string",
+                                                        "example": "192.168.1.1"
+                                                    },
+                                                    "violations": {
+                                                        "type": "integer",
+                                                        "example": 8
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 123,
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user account",
+                "description": "Create a new user account with email verification",
+                "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "John"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 8,
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registration successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registration successful. Please verify your email."
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "first_name": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "last_name": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "email_verified_at": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The email has already been taken."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too many requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Too Many Attempts."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Authenticate user and return access token",
+                "description": "Login with email and password to receive a Sanctum access token",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "first_name": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "last_name": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "email_verified_at": {
+                                                    "type": "string",
+                                                    "example": "2024-01-01T00:00:00Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abc123..."
+                                        },
+                                        "expires_at": {
+                                            "type": "string",
+                                            "example": "2024-01-01T00:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "423": {
+                        "description": "Account locked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Account temporarily locked due to too many failed attempts"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too many requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Too Many Attempts."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout user and revoke current access token",
+                "description": "Revoke the current access token and log the user out",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "example": "https://example.com/avatar.jpg",
+                        "nullable": true
+                    },
+                    "bio": {
+                        "type": "string",
+                        "example": "Experienced developer",
+                        "nullable": true
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "New York, NY",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+1234567890",
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "example": "2024-01-01T00:00:00Z",
+                        "nullable": true
+                    },
+                    "average_rating": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 4.79999999999999982236431605997495353221893310546875,
+                        "nullable": true
+                    },
+                    "total_reviews": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "jobs_completed": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "skills_offered": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": "2024-01-01T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Job": {
+                "title": "Job",
+                "description": "Job listing model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Build a WordPress Website"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Need a professional website for my business"
+                    },
+                    "budget_min": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "budget_max": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 1000,
+                        "nullable": true
+                    },
+                    "budget_type": {
+                        "type": "string",
+                        "enum": [
+                            "hourly",
+                            "fixed",
+                            "negotiable"
+                        ],
+                        "example": "fixed"
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-02-15",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "open",
+                            "in_progress",
+                            "completed",
+                            "cancelled",
+                            "expired"
+                        ],
+                        "example": "open"
+                    },
+                    "is_urgent": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "assigned_to": {
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-15T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": "2024-01-15T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Skill": {
+                "title": "Skill",
+                "description": "Skill listing model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "WordPress Development"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Expert WordPress developer with 5+ years experience"
+                    },
+                    "price_per_hour": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 50,
+                        "nullable": true
+                    },
+                    "price_fixed": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "pricing_type": {
+                        "type": "string",
+                        "enum": [
+                            "hourly",
+                            "fixed",
+                            "negotiable"
+                        ],
+                        "example": "hourly"
+                    },
+                    "is_available": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-15T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": "2024-01-15T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Category": {
+                "title": "Category",
+                "description": "Category model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Web Development"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "web-development"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Web development services",
+                        "nullable": true
+                    },
+                    "icon": {
+                        "type": "string",
+                        "example": "code",
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "Message": {
+                "title": "Message",
+                "description": "Message model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Hello, I'm interested in your job posting"
+                    },
+                    "is_read": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "sender_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "recipient_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "job_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-15T14:30:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Payment": {
+                "title": "Payment",
+                "description": "Payment model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 750
+                    },
+                    "platform_fee": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 37.5
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "held",
+                            "released",
+                            "refunded",
+                            "failed"
+                        ],
+                        "example": "released"
+                    },
+                    "payment_method": {
+                        "type": "string",
+                        "example": "stripe"
+                    },
+                    "transaction_id": {
+                        "type": "string",
+                        "example": "txn_123456",
+                        "nullable": true
+                    },
+                    "job_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "payer_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "payee_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-15T16:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": "2024-01-15T16:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Review": {
+                "title": "Review",
+                "description": "Review model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "maximum": 5,
+                        "minimum": 1,
+                        "example": 5
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Excellent work, delivered on time!",
+                        "nullable": true
+                    },
+                    "is_public": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "job_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "reviewer_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "reviewee_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-15T18:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "title": "Pagination Meta",
+                "description": "Pagination metadata",
+                "properties": {
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "from": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 15
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationError": {
+                "title": "Validation Error",
+                "description": "Validation error response",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": {
+                            "email": [
+                                "The email field is required."
+                            ],
+                            "password": [
+                                "The password must be at least 8 characters."
+                            ]
+                        },
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorResponse": {
+                "title": "Error Response",
+                "description": "Generic error response",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "An error occurred"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Detailed error message",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "User authentication and session management"
+        },
+        {
+            "name": "Admin",
+            "description": "Administrative functions and dashboard"
+        }
+    ],
+    "security": [
+        {
+            "sanctum": []
+        }
+    ]
+}

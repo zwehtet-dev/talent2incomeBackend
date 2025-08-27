@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTalents - Photo & Video Services</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .service-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .category-tab {
+            transition: all 0.2s ease;
+        }
+        .category-tab:hover {
+            background-color: #f3f4f6;
+        }
+        .category-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="app">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-gray-900">
+                            hire<br><span class="text-blue-600">talents</span>
+                        </h1>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="flex-1 max-w-lg mx-8">
+                        <div class="relative">
+                            <input
+                                type="text"
+                                placeholder="Search"
+                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                v-model="searchQuery"
+                            >
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <span class="absolute right-3 top-2 text-sm text-gray-500">Talents</span>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <nav class="flex items-center space-x-6">
+                        <a href="#" class="text-gray-700 hover:text-blue-600">Talents</a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600">Influencers</a>
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            <i class="fas fa-sign-in-alt mr-1"></i> Login
+                        </button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Register
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Category Navigation -->
+        <div class="bg-white border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <nav class="flex space-x-1 py-3">
+                    <button
+                        v-for="category in categories"
+                        :key="category.id"
+                        @click="activeCategory = category.id"
+                        :class="['category-tab px-4 py-2 rounded-lg text-sm font-medium',
+                                activeCategory === category.id ? 'active' : 'text-gray-600']"
+                    >
+                        {{ category.name }} <i :class="category.icon" class="ml-1"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Page Title -->
+            <div class="mb-8">
+                <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-2">
+                    <i class="fas fa-home"></i>
+                    <span>/</span>
+                    <span>Talents</span>
+                    <span>/</span>
+                    <span class="text-gray-900">Photo & Video</span>
+                </nav>
+                <h1 class="text-3xl font-bold text-gray-900">Photo & Video</h1>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div
+                    v-for="service in filteredServices"
+                    :key="service.id"
+                    class="service-card bg-white rounded-lg shadow-sm border hover:shadow-md cursor-pointer"
+                >
+                    <!-- Service Image -->
+                    <div class="relative">
+                        <div class="h-48 bg-gradient-to-br rounded-t-lg overflow-hidden" :style="{ background: service.gradient }">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center text-white">
+                                    <i :class="service.icon" class="text-4xl mb-2"></i>
+                                    <p class="text-sm font-medium">{{ service.preview }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-80 rounded-full flex items-center justify-center hover:bg-opacity-100">
+                            <i class="far fa-heart text-gray-600"></i>
+                        </button>
+                    </div>
+
+                    <!-- Service Info -->
+                    <div class="p-4">
+                        <div class="flex items-center mb-2">
+                            <span class="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">{{ service.category }}</span>
+                        </div>
+
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 rounded-full overflow-hidden mr-3" :style="{ background: service.avatarColor }">
+                                <div class="w-full h-full flex items-center justify-center text-white text-xs font-bold">
+                                    {{ service.seller.charAt(0) }}
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-700">{{ service.seller }}</span>
+                        </div>
+
+                        <h3 class="font-semibold text-gray-900 mb-3 line-clamp-2">{{ service.title }}</h3>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-gray-900">From ${{ service.price }}</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                <span class="text-xs text-gray-600 ml-1">{{ service.rating }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center mt-12">
+                <nav class="flex items-center space-x-2">
+                    <button class="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded-lg">1</button>
+                    <button v-for="page in 9" :key="page + 1" class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-lg">{{ page + 1 }}</button>
+                    <span class="text-gray-400">...</span>
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-lg">41</button>
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-lg">42</button>
+                </nav>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-4">Company</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><a href="#" class="hover:text-blue-600">Talents</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Influencers</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Micro Jobs</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-4">Legal</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><a href="#" class="hover:text-blue-600">Privacy Policy</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Terms of Service</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Affiliate Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-4">Opportunities</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><a href="#" class="hover:text-blue-600">Affiliate</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-4">Resources</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><a href="#" class="hover:text-blue-600">Knowledge Base</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Support</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Blog</a></li>
+                            <li><a href="#" class="hover:text-blue-600">API</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t mt-8 pt-8 flex justify-between items-center">
+                    <div class="flex items-center">
+                        <h2 class="text-xl font-bold text-gray-900">
+                            hire<br><span class="text-blue-600">talents</span>
+                        </h2>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <select class="text-sm border border-gray-300 rounded px-3 py-1">
+                            <option>English</option>
+                        </select>
+                        <button class="text-sm text-gray-600 hover:text-blue-600">Turn On Dark Mode</button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    searchQuery: '',
+                    activeCategory: 'photo-video',
+                    categories: [
+                        { id: 'writing', name: 'Writing & Translation', icon: 'fas fa-pen' },
+                        { id: 'photo-video', name: 'Photo & Video', icon: 'fas fa-camera' },
+                        { id: 'music-audio', name: 'Music & Audio', icon: 'fas fa-music' },
+                        { id: 'graphic-design', name: 'Graphic & Design', icon: 'fas fa-palette' },
+                        { id: 'digital-marketing', name: 'Digital Marketing', icon: 'fas fa-bullhorn' },
+                        { id: 'coding', name: 'Coding & IT Services', icon: 'fas fa-code' },
+                        { id: 'business', name: 'Business', icon: 'fas fa-briefcase' },
+                        { id: 'ai-services', name: 'AI Services', icon: 'fas fa-robot' }
+                    ],
+                    services: [
+                        {
+                            id: 1,
+                            title: 'I will remove the background',
+                            seller: 'Thara S.',
+                            category: 'Photo Retouch',
+                            price: 3,
+                            rating: 4.9,
+                            icon: 'fas fa-cut',
+                            preview: 'REMOVE BACKGROUND',
+                            gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            avatarColor: '#3b82f6'
+                        },
+                        {
+                            id: 2,
+                            title: 'background clearing service',
+                            seller: 'Beby S.',
+                            category: 'Photo Editing',
+                            price: 1,
+                            rating: 4.8,
+                            icon: 'fas fa-eraser',
+                            preview: 'CLEAR BACKGROUND',
+                            gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                            avatarColor: '#ef4444'
+                        },
+                        {
+                            id: 3,
+                            title: 'Hapus Background Foto Anda dalam hitungan Menit dengan Layanan',
+                            seller: 'Armin',
+                            category: 'Photo Editing',
+                            price: 2,
+                            rating: 4.7,
+                            icon: 'fas fa-magic',
+                            preview: 'Sebelum → Sesudah',
+                            gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                            avatarColor: '#06b6d4'
+                        },
+                        {
+                            id: 4,
+                            title: 'Saya bisa menghapus background foto anda secepat kilat',
+                            seller: 'Lilik S.',
+                            category: 'Photo Editing',
+                            price: 3,
+                            rating: 4.9,
+                            icon: 'fas fa-bolt',
+                            preview: 'FAST REMOVAL',
+                            gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                            avatarColor: '#f59e0b'
+                        },
+                        {
+                            id: 5,
+                            title: 'I can remove the photo background',
+                            seller: 'Affiningmcan',
+                            category: 'Photo Editing',
+                            price: 2,
+                            rating: 4.8,
+                            icon: 'fas fa-image',
+                            preview: 'BACKGROUND REMOVAL',
+                            gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                            avatarColor: '#10b981'
+                        },
+                        {
+                            id: 6,
+                            title: 'Colourise photos',
+                            seller: 'Suranga D.',
+                            category: 'Photo Editing',
+                            price: 1,
+                            rating: 4.6,
+                            icon: 'fas fa-fill-drip',
+                            preview: 'COLORIZE',
+                            gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+                            avatarColor: '#f97316'
+                        },
+                        {
+                            id: 7,
+                            title: 'I will remove the background of the photo you want',
+                            seller: 'Feriyam R.',
+                            category: 'Photo Editing',
+                            price: 2,
+                            rating: 4.5,
+                            icon: 'fas fa-crop',
+                            preview: 'PHOTO EDITING',
+                            gradient: 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
+                            avatarColor: '#06b6d4'
+                        },
+                        {
+                            id: 8,
+                            title: 'changes background pictures',
+                            seller: 'Andra D.',
+                            category: 'Photo Editing',
+                            price: 5,
+                            rating: 4.9,
+                            icon: 'fas fa-exchange-alt',
+                            preview: 'CHANGE BACKGROUND',
+                            gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            avatarColor: '#8b5cf6'
+                        }
+                    ]
+                }
+            },
+            computed: {
+                filteredServices() {
+                    if (!this.searchQuery) return this.services;
+                    return this.services.filter(service =>
+                        service.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        service.seller.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        service.category.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    );
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

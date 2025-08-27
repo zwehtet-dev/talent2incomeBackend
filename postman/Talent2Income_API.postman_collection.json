@@ -1,0 +1,732 @@
+{
+	"info": {
+		"_postman_id": "talent2income-api-collection",
+		"name": "Talent2Income API",
+		"description": "Comprehensive API collection for the Talent2Income micro jobs and skill exchange platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "talent2income"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"exec": [
+					"// Set base URL if not already set",
+					"if (!pm.environment.get('base_url')) {",
+					"    pm.environment.set('base_url', 'http://localhost:8000');",
+					"}"
+				],
+				"type": "text/javascript"
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has user data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('user');",
+									"    pm.expect(responseJson.user).to.have.property('id');",
+									"    pm.expect(responseJson.user).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account with email verification"
+					}
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has token', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('token');",
+									"    pm.environment.set('auth_token', responseJson.token);",
+									"});",
+									"",
+									"pm.test('Response has user data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('user');",
+									"    pm.environment.set('user_id', responseJson.user.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and receive access token"
+					}
+				},
+				{
+					"name": "Get Current User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has user data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current authenticated user information"
+					}
+				},
+				{
+					"name": "Logout User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Clear the auth token after logout",
+									"pm.environment.unset('auth_token');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout user and revoke current access token"
+					}
+				}
+			],
+			"description": "User authentication and session management endpoints"
+		},
+		{
+			"name": "Jobs",
+			"item": [
+				{
+					"name": "List Jobs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has data array', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('data');",
+									"    pm.expect(responseJson.data).to.be.an('array');",
+									"});",
+									"",
+									"pm.test('Response has pagination meta', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('meta');",
+									"    pm.expect(responseJson.meta).to.have.property('current_page');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/jobs?page=1&per_page=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"jobs"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "15"
+								},
+								{
+									"key": "category_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "budget_min",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "budget_max",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get paginated list of jobs with optional filtering"
+					}
+				},
+				{
+					"name": "Create Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has job data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson).to.have.property('title');",
+									"    pm.environment.set('job_id', responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Build a WordPress Website\",\n    \"description\": \"I need a professional WordPress website for my business. The site should be responsive, SEO-friendly, and include a contact form.\",\n    \"category_id\": 1,\n    \"budget_min\": 500.00,\n    \"budget_max\": 1000.00,\n    \"budget_type\": \"fixed\",\n    \"deadline\": \"2024-03-15\",\n    \"is_urgent\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/jobs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"jobs"
+							]
+						},
+						"description": "Create a new job listing"
+					}
+				},
+				{
+					"name": "Get Job Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has job details', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson).to.have.property('title');",
+									"    pm.expect(responseJson).to.have.property('description');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/jobs/{{job_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"jobs",
+								"{{job_id}}"
+							]
+						},
+						"description": "Get detailed information about a specific job"
+					}
+				}
+			],
+			"description": "Job listing management and applications"
+		},
+		{
+			"name": "Skills",
+			"item": [
+				{
+					"name": "List Skills",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has data array', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('data');",
+									"    pm.expect(responseJson.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/skills?page=1&per_page=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"skills"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "15"
+								}
+							]
+						},
+						"description": "Get paginated list of skills with optional filtering"
+					}
+				},
+				{
+					"name": "Create Skill",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has skill data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson).to.have.property('title');",
+									"    pm.environment.set('skill_id', responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"WordPress Development\",\n    \"description\": \"Expert WordPress developer with 5+ years of experience. I can create custom themes, plugins, and provide ongoing maintenance.\",\n    \"category_id\": 1,\n    \"price_per_hour\": 50.00,\n    \"pricing_type\": \"hourly\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/skills",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"skills"
+							]
+						},
+						"description": "Create a new skill listing"
+					}
+				}
+			],
+			"description": "Skill listing management and availability"
+		},
+		{
+			"name": "Messages",
+			"item": [
+				{
+					"name": "Get Conversations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has data array', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('data');",
+									"    pm.expect(responseJson.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/messages/conversations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages",
+								"conversations"
+							]
+						},
+						"description": "Get user's conversation list with unread counts"
+					}
+				},
+				{
+					"name": "Send Message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has message data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson).to.have.property('content');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recipient_id\": 2,\n    \"job_id\": 1,\n    \"content\": \"Hi, I'm interested in your job posting. I have extensive experience with WordPress development and would love to discuss the project details with you.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/messages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages"
+							]
+						},
+						"description": "Send a new message to another user"
+					}
+				}
+			],
+			"description": "Real-time messaging and communication"
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "Create Review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has review data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson).to.have.property('rating');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"job_id\": 1,\n    \"reviewee_id\": 2,\n    \"rating\": 5,\n    \"comment\": \"Excellent work! The website was delivered on time and exceeded my expectations. Great communication throughout the project.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reviews",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reviews"
+							]
+						},
+						"description": "Create a review for a completed job"
+					}
+				},
+				{
+					"name": "Get User Reviews",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has reviews data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('data');",
+									"    pm.expect(responseJson).to.have.property('average_rating');",
+									"    pm.expect(responseJson).to.have.property('total_reviews');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/reviews?reviewee_id={{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "reviewee_id",
+									"value": "{{user_id}}"
+								}
+							]
+						},
+						"description": "Get reviews for a specific user"
+					}
+				}
+			],
+			"description": "Rating and review system"
+		}
+	]
+}

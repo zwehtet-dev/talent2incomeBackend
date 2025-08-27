@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+    excludePaths:
+        - bootstrap/
+        - storage/
+        - vendor/
+    ignoreErrors:
+        # Allow mixed types for request data
+        - '#Call to an undefined method Illuminate\\Http\\Request::\$#'
+        # Allow dynamic properties on Eloquent models
+        - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+#'
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false

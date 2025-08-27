@@ -1,0 +1,84 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+
+# Development files
+.env.example
+.env.testing
+.editorconfig
+.php-cs-fixer.php
+.php-cs-fixer.cache
+phpstan.neon
+phpunit.xml
+pest.xml
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules and build files
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm
+.yarn
+
+# Testing
+tests/
+coverage/
+.phpunit.result.cache
+
+# Logs
+*.log
+storage/logs/*
+
+# Cache
+bootstrap/cache/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Temporary files
+tmp/
+temp/
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Deployment scripts
+deploy.sh
+scripts/
+
+# Postman collections
+postman/
+
+# Development database
+database/database.sqlite
+*.sqlite
+
+# Vendor (will be installed in container)
+vendor/
+
+# Build artifacts
+public/build/
+public/hot
+public/storage
+
+# Environment files (except production)
+.env
+.env.local
+.env.development
