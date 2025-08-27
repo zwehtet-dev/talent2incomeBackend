@@ -43,12 +43,13 @@ return new class () extends Migration {
                 $table->index(['reviewee_id', 'rating', 'is_public']);
                 $table->index(['reviewee_id', 'created_at', 'is_public']);
 
-                // Add check constraint for rating range (MySQL syntax)
-                // SQLite will handle this at the application level
-                if (config('database.default') === 'mysql') {
-                    DB::statement('ALTER TABLE reviews ADD CONSTRAINT rating_check CHECK (rating >= 1 AND rating <= 5)');
-                }
             });
+
+            // Add check constraint for rating range (MySQL syntax)
+            // SQLite will handle this at the application level
+            if (config('database.default') === 'mysql') {
+                DB::statement('ALTER TABLE reviews ADD CONSTRAINT rating_check CHECK (rating >= 1 AND rating <= 5)');
+            }
         }
     }
 
