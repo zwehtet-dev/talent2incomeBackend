@@ -66,7 +66,7 @@ services:
       - APP_KEY=base64:MxNkeg3zg2JuE/y/pp0dx3zo6iXIPxlLQYWdhvGrqgY=
       - DB_CONNECTION=mysql
       - DB_HOST=mysql-test
-      - DB_PORT=3306
+      - DB_PORT=3307
       - DB_DATABASE=talent2income_test
       - DB_USERNAME=talent2income_test_user
       - DB_PASSWORD=talent2income_test_password
