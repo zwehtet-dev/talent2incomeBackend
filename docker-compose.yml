@@ -24,7 +24,7 @@ services:
       - APP_URL=http://localhost:8000
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
-      - DB_PORT=3308
+      - DB_PORT=3306
       - DB_DATABASE=talent2income
       - DB_USERNAME=talent2income_user
       - DB_PASSWORD=talent2income_password
@@ -118,7 +118,7 @@ services:
       - APP_KEY=base64:uqxgnxdaujKboTIeVr99+vKIK1ZPhzJ6SlX9Fnaa/PY=
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
-      - DB_PORT=3308
+      - DB_PORT=3306
       - DB_DATABASE=talent2income
       - DB_USERNAME=talent2income_user
       - DB_PASSWORD=talent2income_password
@@ -151,7 +151,7 @@ services:
       - APP_KEY=base64:uqxgnxdaujKboTIeVr99+vKIK1ZPhzJ6SlX9Fnaa/PY=
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
-      - DB_PORT=3308
+      - DB_PORT=3306
       - DB_DATABASE=talent2income
       - DB_USERNAME=talent2income_user
       - DB_PASSWORD=talent2income_password
