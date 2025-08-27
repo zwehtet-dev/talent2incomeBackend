@@ -52,14 +52,16 @@ COPY composer.json composer.lock ./
 
 # Install PHP dependencies
 RUN composer install --no-dev --no-scripts --no-autoloader --optimize-autoloader
-
 # Development stage
 FROM base AS development
 
 # Set Composer process timeout to 10 minutes
-ENV COMPOSER_PROCESS_TIMEOUT=600
+ENV COMPOSER_PROCESS_TIMEOUT=1200
 
-# Install dependencies
+# Copy the rest of the application code
+COPY . .
+
+# Install dependencies (now artisan exists)
 RUN composer install --optimize-autoloader --no-interaction --prefer-dist
 
 # Install additional development tools
@@ -68,9 +70,6 @@ RUN apk add --no-cache \
     npm \
     bash \
     vim
-
-# Copy application code
-COPY . .
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
