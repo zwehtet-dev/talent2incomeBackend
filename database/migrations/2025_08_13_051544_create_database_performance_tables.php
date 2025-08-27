@@ -10,7 +10,6 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        // Database performance metrics table
         Schema::create('database_performance_metrics', function (Blueprint $table) {
             $table->id();
             $table->timestamp('timestamp');
@@ -21,8 +20,8 @@ return new class () extends Migration {
             $table->json('pool_stats')->nullable();
             $table->timestamps();
 
-            $table->index('timestamp');
-            $table->index(['timestamp', 'connection_usage_percent']);
+            $table->index('timestamp'); // single column
+            $table->index(['timestamp', 'connection_usage_percent'], 'db_perf_metrics_ts_conn_idx'); // short name
         });
 
         // Backup logs table
