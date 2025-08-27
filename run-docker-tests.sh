@@ -36,37 +36,37 @@ run_tests() {
     print_status "Running $test_type tests..."
     
     # Start test environment
-    docker-compose -f docker-compose.yml -f docker-compose.test.yml --profile $profile up -d
+    docker compose -f docker compose.yml -f docker compose.test.yml --profile $profile up -d
     
     # Wait for services to be ready
     sleep 10
     
     case $test_type in
         "unit")
-            docker-compose -f docker-compose.yml -f docker-compose.test.yml exec test-runner php artisan test --testsuite=Unit --parallel
+            docker compose -f docker compose.yml -f docker compose.test.yml exec test-runner php artisan test --testsuite=Unit --parallel
             ;;
         "feature")
-            docker-compose -f docker-compose.yml -f docker-compose.test.yml exec test-runner php artisan test --testsuite=Feature --parallel
+            docker compose -f docker compose.yml -f docker compose.test.yml exec test-runner php artisan test --testsuite=Feature --parallel
             ;;
         "integration")
-            docker-compose -f docker-compose.yml -f docker-compose.test.yml exec test-runner php artisan test --testsuite=Integration
+            docker compose -f docker compose.yml -f docker compose.test.yml exec test-runner php artisan test --testsuite=Integration
             ;;
         "performance")
-            docker-compose -f docker-compose.yml -f docker-compose.test.yml --profile performance exec performance-test php artisan test --testsuite=Performance
+            docker compose -f docker compose.yml -f docker compose.test.yml --profile performance exec performance-test php artisan test --testsuite=Performance
             ;;
         "security")
-            docker-compose -f docker-compose.yml -f docker-compose.test.yml --profile security exec security-test php artisan test --testsuite=Security
+            docker compose -f docker compose.yml -f docker compose.test.yml --profile security exec security-test php artisan test --testsuite=Security
             ;;
         "all")
-            docker-compose -f docker-compose.yml -f docker-compose.test.yml exec test-runner php artisan test --parallel
+            docker compose -f docker compose.yml -f docker compose.test.yml exec test-runner php artisan test --parallel
             ;;
         "coverage")
-            docker-compose -f docker-compose.yml -f docker-compose.test.yml exec test-runner php artisan test --coverage --min=80
+            docker compose -f docker compose.yml -f docker compose.test.yml exec test-runner php artisan test --coverage --min=80
             ;;
     esac
     
     # Stop test environment
-    docker-compose -f docker-compose.yml -f docker-compose.test.yml --profile $profile down
+    docker compose -f docker compose.yml -f docker compose.test.yml --profile $profile down
 }
 
 # Main script
@@ -108,14 +108,14 @@ case "${1:-all}" in
         ;;
     "setup")
         print_status "Setting up test environment..."
-        docker-compose -f docker-compose.yml -f docker-compose.test.yml --profile testing up -d
-        docker-compose -f docker-compose.yml -f docker-compose.test.yml exec test-runner composer install
-        docker-compose -f docker-compose.yml -f docker-compose.test.yml exec test-runner php artisan migrate --force
+        docker compose -f docker compose.yml -f docker compose.test.yml --profile testing up -d
+        docker compose -f docker compose.yml -f docker compose.test.yml exec test-runner composer install
+        docker compose -f docker compose.yml -f docker compose.test.yml exec test-runner php artisan migrate --force
         print_success "Test environment ready!"
         ;;
     "teardown")
         print_status "Tearing down test environment..."
-        docker-compose -f docker-compose.yml -f docker-compose.test.yml down -v
+        docker compose -f docker compose.yml -f docker compose.test.yml down -v
         print_success "Test environment cleaned up!"
         ;;
     "help"|"-h"|"--help")

@@ -38,7 +38,7 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
+if ! command -v docker compose &> /dev/null; then
     print_error "Docker Compose is not installed. Please install Docker Compose first."
     exit 1
 fi
@@ -67,10 +67,10 @@ fi
 
 # Build and start containers
 print_status "Building Docker containers..."
-docker-compose build --no-cache
+docker compose build --no-cache
 
 print_status "Starting Docker containers..."
-docker-compose up -d
+docker compose up -d
 
 # Wait for services to be ready
 print_status "Waiting for services to be ready..."
@@ -78,33 +78,33 @@ sleep 30
 
 # Install Composer dependencies
 print_status "Installing Composer dependencies..."
-docker-compose exec app composer install --optimize-autoloader
+docker compose exec app composer install --optimize-autoloader
 
 # Generate application key if not set
 print_status "Generating application key..."
-docker-compose exec app php artisan key:generate
+docker compose exec app php artisan key:generate
 
 # Run database migrations
 print_status "Running database migrations..."
-docker-compose exec app php artisan migrate --force
+docker compose exec app php artisan migrate --force
 
 # Seed the database
 print_status "Seeding the database..."
-docker-compose exec app php artisan db:seed --force
+docker compose exec app php artisan db:seed --force
 
 # Create storage link
 print_status "Creating storage link..."
-docker-compose exec app php artisan storage:link
+docker compose exec app php artisan storage:link
 
 # Clear and cache configuration
 print_status "Optimizing application..."
-docker-compose exec app php artisan config:cache
-docker-compose exec app php artisan route:cache
-docker-compose exec app php artisan view:cache
+docker compose exec app php artisan config:cache
+docker compose exec app php artisan route:cache
+docker compose exec app php artisan view:cache
 
 # Run tests to verify setup
 print_status "Running tests to verify setup..."
-docker-compose exec app php artisan test --parallel
+docker compose exec app php artisan test --parallel
 
 print_success "Docker environment setup completed!"
 print_status "Services are running on:"
@@ -115,11 +115,11 @@ echo "  📧 MailHog: http://localhost:8025"
 echo "  🌐 Nginx (if enabled): http://localhost:80"
 
 print_status "Useful commands:"
-echo "  🐳 View logs: docker-compose logs -f"
-echo "  🔧 Access app container: docker-compose exec app bash"
-echo "  🗄️  Access MySQL: docker-compose exec mysql mysql -u talent2income_user -p talent2income"
-echo "  🧪 Run tests: docker-compose exec app php artisan test"
-echo "  🛑 Stop services: docker-compose down"
-echo "  🗑️  Clean up: docker-compose down -v --remove-orphans"
+echo "  🐳 View logs: docker compose logs -f"
+echo "  🔧 Access app container: docker compose exec app bash"
+echo "  🗄️  Access MySQL: docker compose exec mysql mysql -u talent2income_user -p talent2income"
+echo "  🧪 Run tests: docker compose exec app php artisan test"
+echo "  🛑 Stop services: docker compose down"
+echo "  🗑️  Clean up: docker compose down -v --remove-orphans"
 
 print_success "Setup complete! Your Talent2Income API is ready to use."
